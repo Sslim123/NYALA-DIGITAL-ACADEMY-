@@ -1,38 +1,39 @@
+:root {
+  --primary-blue: #002347;   /* Navy for Trust */
+  --accent-blue: #00A8E8;    /* Tech Blue */
+  --gold: #FFD700;           /* Prosperity */
+  --bg-light: #f8f9fa;
+}
+
+body {
+  font-family: 'Cairo', sans-serif; /* Best for AR/EN duality */
+  direction: rtl; /* Start with RTL for Nyala users */
+}
+/* src/App.css */
 .App {
-  text-align: center;
+  text-align: right; /* Default for Arabic */
+  direction: rtl;    /* Right-to-Left */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* If the language is toggled to English, we will later use a class like .en-dir */
+/* .en-dir {
+  text-align: left;
+  direction: ltr;
+} */
+.ar-dir {
+  text-align: right;
+  font-family: 'Cairo', sans-serif;
+}
+.en-dir {
+  text-align: left;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Ensure the Navbar flip properly */
+.en-dir .navbar-brand {
+  flex-direction: row-reverse;
+}
+.color-primary {
+  color: #002347;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
