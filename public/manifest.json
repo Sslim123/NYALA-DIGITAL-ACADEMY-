@@ -1,0 +1,28 @@
+
+        {
+  "short_name": "NDA Nyala",
+  "name": "Nyala Digital Academy",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#002347",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary"
+}

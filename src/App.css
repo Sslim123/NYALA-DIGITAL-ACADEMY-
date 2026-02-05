@@ -1,0 +1,39 @@
+:root {
+  --primary-blue: #002347;   /* Navy for Trust */
+  --accent-blue: #00A8E8;    /* Tech Blue */
+  --gold: #FFD700;           /* Prosperity */
+  --bg-light: #f8f9fa;
+}
+
+body {
+  font-family: 'Cairo', sans-serif; /* Best for AR/EN duality */
+  direction: rtl; /* Start with RTL for Nyala users */
+}
+/* src/App.css */
+.App {
+  text-align: right; /* Default for Arabic */
+  direction: rtl;    /* Right-to-Left */
+}
+
+/* If the language is toggled to English, we will later use a class like .en-dir */
+/* .en-dir {
+  text-align: left;
+  direction: ltr;
+} */
+.ar-dir {
+  text-align: right;
+  font-family: 'Cairo', sans-serif;
+}
+.en-dir {
+  text-align: left;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Ensure the Navbar flip properly */
+.en-dir .navbar-brand {
+  flex-direction: row-reverse;
+}
+.color-primary {
+  color: #002347;
+}
+
