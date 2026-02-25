@@ -1,20 +1,70 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
-const { Pool } = require('pg'); // This talks to PostgreSQL
+const express = require('express');
+const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs');
+const pool = require('./db');
 const cors = require('cors');
+const courseRoutes = require('./Routes/CourseRoutes.js');
+const materialsRoutes = require("./Routes/Materials.js");
+const coursesRoutes = require("./Routes/courses.js");
+const submissionsRoutes = require("./Routes/submissions.js")
+const freeCourseStructure = require("./Routes/freeCourseStructure");
+//const progressRoutes = require("./Routes/CourseRoutes.js")
+
+
+
 const app = express();
-app.use(cors());
+const path = require('path');
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+)
+
 app.use(express.json());
+app.use(
+  session({
+    name: "seb.sid",
+    secret: "seb-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStore({
+      checkPeriod: 86400000
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax"
+    },
+  })
+);
+app.use('/api/courses', courseRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/courses", coursesRoutes);
+app.use("/api/materials", materialsRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/api/submissions", submissionsRoutes);
+app.use("/api/courses", freeCourseStructure);
+
+//app.use("api/progress", progressRoutes);
+
+
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+});
 const nodemailer = require('nodemailer');
 const testBcrypt = async () => {
-    const pass = "cisco";
-    const hash = await bcrypt.hash(pass, 10);
-    const isMatch = await bcrypt.compare(pass, hash);
-    console.log("--- BCRYPT SYSTEM TEST ---");
-    console.log("Password: 'cisco'");
-    console.log("Generated Hash:", hash);
-    console.log("Internal System Match:", isMatch);
+  const pass = "cisco";
+  const hash = await bcrypt.hash(pass, 10);
+  const isMatch = await bcrypt.compare(pass, hash);
+  console.log("--- BCRYPT SYSTEM TEST ---");
+  console.log("Password: 'cisco'");
+  console.log("Generated Hash:", hash);
+  console.log("Internal System Match:", isMatch);
 };
 testBcrypt();
 // 1. Create the Transporter (The "Mailman")
@@ -26,28 +76,19 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 1. Connect to your Pioneer_DB
-const pool = new Pool({
-  user: process.env.DB_USER,      
-  host: process.env.DB_HOST,      
-  database: process.env.DB_NAME,  
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});
-
 // 2. The "Listener" for the Apply Form
 app.post('/api/apply', async (req, res) => {
   const { name, email, track, password } = req.body;
   console.log("RAW BODY RECEIVED:", req.body);
   if (!password || password === 'temporary_default_pass') {
-      console.warn("WARNING: Received default or empty password for:", email);
+    console.warn("WARNING: Received default or empty password for:", email);
   }
   try {
     console.log("--- New Application ---");
     console.log("Plain Password received:", password); // Should be 'cisco'
     const saltRounds = 10;
     // In api/apply
-const hashedPassword = await bcrypt.hash(password.trim(), saltRounds);
+    const hashedPassword = await bcrypt.hash(password.trim(), saltRounds);
 
     console.log("Generated Hash:", hashedPassword); // Should start with $2b$10$...
     const result = await pool.query(
@@ -74,8 +115,9 @@ const hashedPassword = await bcrypt.hash(password.trim(), saltRounds);
                 <div style="background: #f8f9fa; padding: 15px; font-size: 12px; color: #666;">
                 <p><strong>Contact Us:</strong></p>
                 <p>📍 Nyala, South Darfur | 📞 +249 123 456 789</p>
-                <img src="https://res.cloudinary.com" alt="NDA Logo" style="width: 150px;">
-            </div>
+src="https://res.cloudinary.com/dndvxb9hk/image/upload/v1770707447/nyala-academy-logo_tudtwu.png"
+                  alt="Logo" width="auto" height="100px"/>
+                </div>
         </div>
       `
     };
@@ -93,57 +135,85 @@ const hashedPassword = await bcrypt.hash(password.trim(), saltRounds);
     return res.status(500).json({ success: false, message: "Database Error" });
   }
 });
+
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body  
-  if (!password || !email) {
-    return res.status(400).json({ success: false, message: "Email and Password are required." });
+
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Email and Password are required."
+    });
   }
+
   try {
-    const userResult = await pool.query('SELECT * FROM students WHERE email = $1', [email.trim()]);
-    console.log("Input Email:", email);
+
+    const userResult = await pool.query(
+      'SELECT * FROM students WHERE email = $1',
+      [email.trim()]
+    );
+
     if (userResult.rows.length === 0) {
-      return res.status(401).json({ success: false, message: "Account not found." });
+      return res.status(401).json({
+        success: false,
+        message: "Account not found."
+      });
     }
 
-const inputPassword = req.body.password.toString().trim();
-const student = userResult.rows[0];
+    const student = userResult.rows[0];
 
-const isMatch = await bcrypt.compare(inputPassword, student.student_password.trim());
-console.log(`Login Attempt for ${email}: Match = ${isMatch}`);
-    
+    const isMatch = await bcrypt.compare(
+      password.trim(),
+      student.student_password.trim()
+    );
+
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Incorrect password." });
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect password."
+      });
     }
-    //Check status
+
+    // Check status
     if (student.status !== 'accepted') {
-      return res.status(403).json({ success: false, message: `Status is ${student.status}` });
-    }
-    // 2. CHECK THE STATUS (The Gatekeeper)
-    if (student.status === 'pending') {
       return res.status(403).json({
         success: false,
-        message: "Your application is still pending. Please wait for an approval email."
+        message: `Status is ${student.status}`
       });
     }
 
-    if (student.status === 'rejected') {
-      return res.status(403).json({
-        success: false,
-        message: "We regret to inform you that your application was not accepted."
-      });
-    }
+    // إنشاء التوكن
+    const token = jwt.sign(
+      {
+        id: student.student_id,
+        track: student.current_track
+      },
+      "SECRET_KEY",   // لاحقاً ننقلها إلى .env
+      { expiresIn: "1d" }
+    );
 
-    // 3. If they reach here, they are 'accepted'!
-    return res.json({
+    res.json({
       success: true,
       message: "Welcome to the Academy!",
-      user: { name: student.full_name, track: student.current_track }
+      token,
+      user: {
+        id: student.student_id,
+        name: student.full_name,
+        track: student.current_track
+      }
     });
 
   } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
 });
+
+
 // Get all students for the Admin Dashboard
 app.get('/api/students', async (req, res) => {
   try {
@@ -182,6 +252,8 @@ app.patch('/api/students/:id/status', async (req, res) => {
             <p style="margin: 0;"><strong>Username:</strong> ${student.email}</p>
             <p style="margin: 0;"><strong>Password:</strong> (The password you chose during application)</p>
         </div>
+src="https://res.cloudinary.com/dndvxb9hk/image/upload/v1770707447/nyala-academy-logo_tudtwu.png"
+                  alt="Logo" width="auto" height="100px"/>
         <a href="http://localhost:3000/login" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Login to Student Portal</a>
       `
       : `<p>We regret to inform you that your application for ${student.current_track} was not accepted at this time.</p>`;
@@ -200,13 +272,18 @@ app.patch('/api/students/:id/status', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-// Get materials based on the student's track
-app.get('/api/materials/:track', async (req, res) => {
-  const { track } = req.params;
+
+// Get materials based on the student's 
+app.get('/api/materials', async (req, res) => {
+  //console.log("SESSION:", req.session);
+  console.log("SESSION DATA:", req.session);
+  if (!req.session.userId) {
+    console.log("SESSION INSIDE MATERIALS:", req.session);
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   try {
     const result = await pool.query(
-      'SELECT * FROM materials WHERE track = $1 ORDER BY unit_number ASC',
-      [track]
+      'SELECT * FROM materials ORDER BY track, unit_number ASC'
     );
     res.json(result.rows);
   } catch (err) {
@@ -214,5 +291,161 @@ app.get('/api/materials/:track', async (req, res) => {
     res.status(500).send('Server Error fetching materials');
   }
 });
+
+// access to free course after token create sessons 
+
+app.post("/api/auth/token-login", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token missing" });
+    }
+
+    const result = await pool.query(
+      `
+      SELECT id, password_set
+      FROM users
+      WHERE access_token = $1
+      AND free_access_enabled = true
+      `,
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const user = result.rows[0];
+
+    // 🔑 إنشاء session
+    req.session.userId = user.id;
+
+    // 🎯 القرار
+    res.json({
+      success: true,
+      next:
+        user.password_set === true
+          ? "/free-course"
+          : "/set-password",
+    });
+  } catch (err) {
+    console.error("TOKEN LOGIN ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// app.get("/api/free-course-access", (req, res) => {
+//   if (!req.session.userId) {
+//     return res.status(401).json({ access: false });
+//   }
+//   res.json({ access: true });
+// });
+app.post("/api/set-password", async (req, res) => {
+  try {
+    // 1️⃣ تحقق من session
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    const { password } = req.body;
+    if (!password || password.length < 8) {
+      return res.status(400).json({ error: "Password too short" });
+    }
+    // 2️⃣ تأكد أن كلمة المرور لم تُضبط من قبل
+    const userCheck = await pool.query(
+      `
+      SELECT password_set
+      FROM users
+      WHERE id = $1
+      `,
+      [req.session.userId]
+    );
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (userCheck.rows[0].password_set) {
+      return res.status(400).json({ error: "Password already set" });
+    }
+
+    // 3️⃣ Hash password
+    const hash = await bcrypt.hash(password, 10);
+
+    // 4️⃣ Update password + invalidate token
+    await pool.query(
+      `
+      UPDATE users
+      SET password_hash = $1,
+          password_set = true,
+          access_token = NULL
+      WHERE id = $2
+      `,
+      [hash, req.session.userId]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("SET PASSWORD ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Missing credentials" });
+  }
+
+  const result = await pool.query(
+    `
+    SELECT id, password_hash
+    FROM users
+    WHERE email = $1
+    `,
+    [email]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
+
+  const user = result.rows[0];
+
+  const match = await bcrypt.compare(password, user.password_hash);
+  if (!match) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
+
+  req.session.userId = user.id;
+  res.json({ success: true });
+});
+
+app.get("/api/me", async (req, res) => {
+  if (!req.session.userId) {
+    return res.json({ loggedIn: false });
+  }
+  const result = await pool.query(
+    `
+    SELECT
+      id,
+      name,
+      email,
+      free_access_enabled
+    FROM users
+    WHERE id = $1
+    `,
+    [req.session.userId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.json({ loggedIn: false });
+  }
+
+  res.json({
+    loggedIn: true,
+    user: result.rows[0],
+  });
+});
+
 
 app.listen(5000, () => console.log("Bridge running on port 5000"));

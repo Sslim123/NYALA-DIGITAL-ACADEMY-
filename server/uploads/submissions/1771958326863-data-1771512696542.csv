@@ -1,0 +1,7 @@
+"conname","pg_get_constraintdef"
+"submissions_id_not_null","NOT NULL id"
+"submissions_student_id_not_null","NOT NULL student_id"
+"submissions_file_path_not_null","NOT NULL file_path"
+"submissions_pkey","PRIMARY KEY (id)"
+"fk_student","FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE"
+"fk_lesson","FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE"
