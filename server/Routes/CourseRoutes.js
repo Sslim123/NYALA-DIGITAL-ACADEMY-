@@ -1,16 +1,13 @@
-// Routes/CourseRoutes.js
-
 const express = require('express');
 const multer = require('multer');
 const router = express.Router();
-const pool = require('../db');
-const path = require('path');
+const pool = require('../config/db');
 const fs = require('fs');
-///const verifyToken = require('../midllware/auth')
+const verifyToken = require('../middleware/auth')
 
 
 
-router.get('/all-courses-structure', async (req, res) => {
+router.get('/all-courses-structure', verifyToken, async (req, res) => {
   try {
     const query = `
             SELECT 

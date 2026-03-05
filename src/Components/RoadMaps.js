@@ -1,3 +1,4 @@
+import React from "react";
 const Roadmap = ({ isEnglish }) => {
     return (
         <div className="container py-5">
@@ -6,9 +7,7 @@ const Roadmap = ({ isEnglish }) => {
             </h2>
 
             <div className="row g-4">
-                {/* Cisco Path */}
                 <div className="col-lg-4 col-md-6">
-                    {/* COLUMN HEADER */}
                     <div className={`mb-4 text-${isEnglish ? "start" : "end"}`}>
                         <h3 className="fw-bold">
                             {isEnglish ? "Cisco Networking Path" : "مسار شبكات سيسكو"}
@@ -18,7 +17,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP CARD 1 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             01. {isEnglish ? "Foundations" : "التأسيس"}
@@ -28,7 +26,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP CARD 2 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             02. {isEnglish ? "Configuration" : "الإعداد"}
@@ -38,7 +35,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP CARD 3 */}
                     <div className="p-4 bg-white shadow-sm">
                         <h5 className="text-success mb-1">
                             03. {isEnglish ? "Certification" : "الاحتراف"}
@@ -49,9 +45,7 @@ const Roadmap = ({ isEnglish }) => {
                     </div>
                 </div>
 
-                {/* Digital Archiving Path */}
                 <div className="col-lg-4 col-md-6">
-                    {/* COLUMN HEADER */}
                     <div className={`mb-4 text-${isEnglish ? "start" : "end"}`}>
                         <h3 className="fw-bold">
                             {isEnglish ? "Digital Archiving Path" : "مسار الأرشفة الرقمية"}
@@ -63,7 +57,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 1 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             01. {isEnglish ? "Foundations" : "التأسيس"}
@@ -75,7 +68,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 2 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             02. {isEnglish ? "Organization" : "التنظيم"}
@@ -87,7 +79,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 3 */}
                     <div className="p-4 bg-white shadow-sm">
                         <h5 className="text-success mb-1">
                             03. {isEnglish ? "Professional Practice" : "التطبيق المهني"}
@@ -101,9 +92,7 @@ const Roadmap = ({ isEnglish }) => {
                 </div>
 
 
-                {/* Cybersecurity Path */}
                 <div className="col-lg-4 col-md-6">
-                    {/* COLUMN HEADER */}
                     <div className={`mb-4 text-${isEnglish ? "start" : "end"}`}>
                         <h3 className="fw-bold">
                             {isEnglish ? "Cybersecurity Path" : "مسار الأمن السيبراني"}
@@ -115,7 +104,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 1 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             01. {isEnglish ? "Foundations" : "التأسيس"}
@@ -127,7 +115,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 2 */}
                     <div className="p-4 bg-white shadow-sm mb-3">
                         <h5 className="text-primary mb-1">
                             02. {isEnglish ? "Defense & Analysis" : "الدفاع والتحليل"}
@@ -139,7 +126,6 @@ const Roadmap = ({ isEnglish }) => {
                         </p>
                     </div>
 
-                    {/* STEP 3 */}
                     <div className="p-4 bg-white shadow-sm">
                         <h5 className="text-success mb-1">
                             03. {isEnglish ? "Hands-on Labs" : "التطبيق العملي"}

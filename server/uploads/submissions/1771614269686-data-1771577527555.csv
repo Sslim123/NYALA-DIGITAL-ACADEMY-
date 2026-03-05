@@ -1,3 +1,0 @@
-"indexname","indexdef"
-"submissions_pkey","CREATE UNIQUE INDEX submissions_pkey ON public.submissions USING btree (id)"
-"unique_submission","CREATE UNIQUE INDEX unique_submission ON public.submissions USING btree (student_id, lesson_key)"

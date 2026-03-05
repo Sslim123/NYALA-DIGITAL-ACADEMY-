@@ -2,7 +2,9 @@
   "name": "nyala-academy",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -11,6 +13,7 @@
     "bootstrap-icons": "^1.13.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "lucide-react": "^0.563.0",
     "pg": "^8.17.2",
     "react": "^19.2.3",
     "react-bootstrap": "^2.10.10",

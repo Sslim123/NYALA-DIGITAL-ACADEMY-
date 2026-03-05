@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Nyala Digital Academy (NDA) - Digital Archiving & IT Training Center
 Bridging the Digital Gap in Darfur through Modern Infrastructure and Specialized Education.
 
@@ -114,4 +114,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
->>>>>>> header-logo
+ header-logo

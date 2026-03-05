@@ -1,39 +1,118 @@
 :root {
-  --primary-blue: #002347;   /* Navy for Trust */
-  --accent-blue: #00A8E8;    /* Tech Blue */
-  --gold: #FFD700;           /* Prosperity */
+  --primary-blue: #002347;
+  /* Navy for Trust */
+  --accent-blue: #00A8E8;
+  /* Tech Blue */
+  --gold: #FFD700;
+  /* Prosperity */
   --bg-light: #f8f9fa;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
-  font-family: 'Cairo', sans-serif; /* Best for AR/EN duality */
-  direction: rtl; /* Start with RTL for Nyala users */
-}
-/* src/App.css */
-.App {
-  text-align: right; /* Default for Arabic */
-  direction: rtl;    /* Right-to-Left */
-}
-
-/* If the language is toggled to English, we will later use a class like .en-dir */
-/* .en-dir {
-  text-align: left;
-  direction: ltr;
-} */
-.ar-dir {
-  text-align: right;
   font-family: 'Cairo', sans-serif;
-}
-.en-dir {
-  text-align: left;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fc;
+
 }
 
-/* Ensure the Navbar flip properly */
-.en-dir .navbar-brand {
-  flex-direction: row-reverse;
-}
 .color-primary {
   color: #002347;
 }
 
+.list-group-item.active {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+.card {
+  border-radius: 14px;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.hero-progress {
+  border-radius: 20px;
+}
+
+/* .course-sidebar {
+  max-height: 80vh;
+  overflow-y: auto;
+} */
+
+.unit-btn {
+  background: #f8f9fc;
+  border: none;
+}
+
+.unit-btn:hover {
+  background: #e2e6f5;
+}
+
+.active-unit {
+  background: #4e73df;
+  color: white;
+}
+
+.lesson-link {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.lesson-link:hover {
+  background: #f1f3ff;
+}
+
+.active-lesson {
+  background: #dbe4ff;
+  font-weight: 600;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd !important;
+}
+
+.rotate-n90 {
+  transform: rotate(-90deg);
+}
+
+.bg-primary-subtle {
+  background-color: #e7f1ff !important;
+}
+
+.transition-collapse {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.unit-open {
+  max-height: 500px;
+  /* large enough */
+  opacity: 1;
+}
+
+.unit-closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.lesson-content-area {
+  min-height: 500px;
+}.rounded-3:hover {
+    transform: translateX(5px);
+    background-color: #f8f9fa;
+}

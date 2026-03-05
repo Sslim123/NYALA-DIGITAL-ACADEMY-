@@ -3,10 +3,14 @@ const AdminDashboard = ({ isEnglish }) => {
   const [students, setStudents] = useState([]);
 
   const handleStatusUpdate = async (id, newStatus) => {
+    const token = localStorage.getItem('token');
     try {
       const response = await fetch(`http://localhost:5000/api/students/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ status: newStatus })
       });
 
@@ -16,13 +20,37 @@ const AdminDashboard = ({ isEnglish }) => {
         ));
       }
     } catch (error) {
-      console.error("Update failed:", error);
+      console.error("Update failed:", error.message);
     }
   };
   useEffect(() => {
-    fetch('http://localhost:5000/api/students')
-      .then(res => res.json())
-      .then(data => setStudents(data));
+    const FetchStudents = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch('http://localhost:5000/api/students', {
+
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (res.status === 403 || res.status === 401) {
+          console.error("غير مصرح لك بالدخول!");
+          return;
+
+        }
+        if (!res.ok) {
+          throw new Error(`server error: ${res.status}`);
+        }
+        const data =
+          await res.json();
+        setStudents(data);
+      } catch (err) {
+        console.error("invailed token", err.error)
+      }
+    }
+    FetchStudents();
   }, []);
 
   return (
@@ -62,7 +90,7 @@ const AdminDashboard = ({ isEnglish }) => {
                   onClick={() => handleStatusUpdate(s.student_id, 'rejected')}
                 >
                   Reject
-                </button>               
+                </button>
               </td>
             </tr>
           ))}

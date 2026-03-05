@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { translations } from  '../translations';
+import { Translations } from  '../TranslateContent/Translations';
 const Verify = ({ isEnglish}) => {
-  const content = isEnglish ? translations.en : translations.ar;
+  const content = isEnglish ? Translations.en : Translations.ar;
   const [certId, setCertId] = useState("");
-  const [result, setResult] = useState(null); // 'null', 'found', or 'not_found'
+  const [result, setResult] = useState(null); 
 
   const handleVerify = (e) => {
     e.preventDefault();
@@ -38,7 +38,6 @@ const Verify = ({ isEnglish}) => {
             </Button>
           </Form>
 
-          {/* Result Area */}
           {result === "found" && (
             <Alert variant="success" className="shadow-sm">
               <Alert.Heading>✅ Valid Certificate Found {} </Alert.Heading>

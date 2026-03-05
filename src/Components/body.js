@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { translations } from '../translations';
+import { Translations } from '../TranslateContent/Translations';
+
 const Body = ({ toggleLangauge, isEnglish }) => {
-  const content = isEnglish ? translations.en : translations.ar;
+  const content = isEnglish ? Translations.en : Translations.ar;
   const [show, setShow] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState({ title: '', details: '', features: [] });
   const navigate = useNavigate();
 
-  const [selectedTrack, setSelectedTrack] = useState({ title: '', details: '', features: [] });
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
   const trackContent = {
     cyber: {
       title: isEnglish ? "CyberSecurity" : "الأمن السيبراني",
@@ -36,12 +38,11 @@ const Body = ({ toggleLangauge, isEnglish }) => {
     setShow(true);
   };
   return (
-    <main>      
+    <main>
       <section className="py-5">
         <Container>
           <h2 className="text-center mb-5" style={{ color: 'var(--primary-blue)' }}> {content.training}  </h2>
           <Row>
-            {/* Card 1: Archiving */}
             <div className="col-md-4 mb-4">
               <div className="card h-100 border-0 shadow-sm p-3">
                 <h4 className="text-info">
@@ -54,7 +55,6 @@ const Body = ({ toggleLangauge, isEnglish }) => {
               </div>
             </div>
 
-            {/* Card 2: Networking */}
             <div className="col-md-4 mb-4">
               <div className="card h-100 border-0 shadow-sm p-3">
                 <h4 className="text-info">{content.network}</h4>
@@ -64,7 +64,6 @@ const Body = ({ toggleLangauge, isEnglish }) => {
                 </button>
               </div>
             </div>
-            {/* Card 3: Cyber Security */}
             <div className="col-md-4 mb-4">
               <div className="card h-100 border-0 shadow-sm p-3">
                 <h4 className="text-info">{content.security}</h4>
@@ -96,7 +95,6 @@ const Body = ({ toggleLangauge, isEnglish }) => {
       </Modal>
 
 
-      {/* --- HERO SECTION --- */}
       <section id="training-section" className="hero-section py-5" style={{ backgroundColor: '#f8f9fa' }}>
         <Container>
           <Row className="align-items-center">

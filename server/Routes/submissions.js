@@ -1,24 +1,23 @@
-// submissions.js
-
-// مسؤول عن:
-
-// رفع الواجب
-
-// تسجيل submission
-
-// عرض درجة الواجب بعد المراجعة
 const express = require('express');
 const multer = require('multer');
 const router = express.Router();
-const pool = require('../db');
+const pool = require('../config/db');
 const path = require('path');
 const fs = require('fs');
-const verifyToken = require('../middleware/auth')
+const verifyToken = require('../middleware/auth');
 
+
+const { createClient } = require("@supabase/supabase-js");
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
+console.log("SUPABASE_URL: 2", process.env.SUPABASE_URL);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../uploads/submissions');
+    const uploadPath = path.join(__dirname, '../uploads');
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
@@ -27,127 +26,98 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }); // 10MB max)
 
-router.post(
-  "/upload-free-course",
-  verifyToken,
-  upload.single("file"),
-  async (req, res) => {
-
-    try {
-      const studentId = req.student.id;
-      const lessonKey = req.body.lesson_key;
-      console.log("DEBUG: Received lessonKey:", lessonKey);
-
-      if (!lessonKey) {
-        return res.status(400).json({ error: "lesson_key is missing from request" });
-      }
-    
-// 1. Check if req.file exists first!
-if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-}
-
-// 2. Now check the mimetype using req.file
-const isPdf = req.file.mimetype.includes("pdf");
-const isWord = req.file.mimetype.includes("word") || req.file.mimetype.includes("officedocument");
-
-if (!isPdf && !isWord) {
-    return res.status(400).json({ message: "Invalid file type. Only PDF and Word allowed." });
-}
-
-// 3. Define your path
-const filePath = `/uploads/submissions/${req.file.filename}`;
-
-
-
-      const result = await pool.query(
-        `
-        INSERT INTO submissions 
-        (student_id, lesson_key, file_path)
-        VALUES ($1, $2, $3)
-        ON CONFLICT ON CONSTRAINT unique_submission
-        DO UPDATE SET 
-        file_path = EXCLUDED.file_path,
-        submitted_at = NOW();
-        
-        `,
-        [studentId, lessonKey, filePath]
-      );
-      console.log("Values:", studentId, lessonKey, filePath);
-
-      return res.json({
-        message: "تم رفع الحل بنجاح",
-        data: result.rows[0]
-      });
-
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-      return res.status(500).json({ message: err.message });
-    }
-  }
-);
-
-router.get("/free-course-progress", verifyToken, async (req, res) => {
+router.get("/units", async (req, res) => {
   try {
-
-    const studentId = req.student.id;
-
-    const result = await pool.query(
-      `SELECT lesson_key FROM submissions WHERE student_id = $1`,
-      [studentId]
-    );
-
-    const submissions = result.rows.map(r => r.lesson_key);
-
-    const units = ["unit-1", "unit-2", "unit-3", "unit-4"];
-    const unitProgress = {};
-    const ITEMS_PER_UNIT = 9; // 3 lessons × 3 activities
-
-    units.forEach(unit => {
-
-      const unitActivities = submissions.filter(key =>
-        key.startsWith(unit) &&
-        !key.includes("final")
-      );
-
-      const finalSubmitted = submissions.includes(`${unit}-final`);
-
-      const completedItems = unitActivities.length;
-
-      let progress = 0;
-
-      if (completedItems >= ITEMS_PER_UNIT) {
-        progress = 90;
-        if (finalSubmitted) {
-          progress = 100;
-        }
-      } else {
-        progress = Math.round((completedItems / ITEMS_PER_UNIT) * 90);
-      }
-
-      unitProgress[unit] = progress;
-
-    });
-
-    const courseProgress =
-      Math.round(
-        Object.values(unitProgress).reduce((a, b) => a + b, 0) /
-        units.length
-      );
-
-    res.json({
-      courseProgress,
-      unitProgress
-    });
-
+    const result = await pool.query("SELECT * FROM units ORDER BY id");
+    res.json(result.rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Progress error" });
+    res.status(500).json({ error: err.message });
   }
 });
 
+router.get("/lessons/:unitId", verifyToken, async (req, res) => {
+  const { unitId } = req.params;
+  if (!unitId || unitId === 'undefined') {
+    return res.status(400).json({ error: "Unit ID is required" });
+  }
+  try {
+    const result = await pool.query(
+      "SELECT * FROM lessons WHERE unit_id = $1",
+      [unitId]
+    );
+    console.log(result.rows)
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+});
 
+router.get("/materials/:lessonId",verifyToken, async (req, res) => {
+
+    const lessonId = req.params.lessonId
+
+    const materials = await pool.query(
+        "SELECT * FROM materials WHERE lesson_id = $1",
+        [lessonId]
+    )
+
+    const result = materials.rows.map(mat => {
+
+        const { data } = supabase
+            .storage
+            .from("free-course-materials")
+            .getPublicUrl(mat.file_path)
+
+        return {
+            ...mat,
+            url: data.publicUrl
+        }
+    })
+
+    res.json(result)
+})
+
+router.get("/free-course-progress", verifyToken, async (req, res) => {
+  try {
+    const studentId = req.student.id;
+
+    const result = await pool.query(`
+      SELECT l.unit_id,
+             COUNT(m.id) FILTER (
+                WHERE l.is_final = false
+                AND m.type IN ('lab','homework','assessment')
+             ) AS total,
+             COUNT(s.id) FILTER (
+                WHERE l.is_final = false
+                AND m.type IN ('lab','homework','assessment')
+             ) AS submitted
+      FROM lessons l
+      LEFT JOIN materials m ON m.lesson_id = l.id
+      LEFT JOIN submissions s
+             ON s.material_id = m.id
+             AND s.student_id = $1
+      GROUP BY l.unit_id
+    `, [studentId]);
+
+    const progress = {};
+
+    result.rows.forEach(row => {
+      const percent =
+        row.total > 0
+          ? Math.round((row.submitted / row.total) * 100)
+          : 0;
+
+      progress[row.unit_id] = percent;
+    });
+
+    res.json(progress);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to calculate progress" });
+  }
+});
 
 module.exports = router;

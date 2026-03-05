@@ -45,13 +45,23 @@
     -->
 
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('PWA Registered!'))
-        .catch(err => console.log('PWA Error', err));
-    });
-  }
+  // if ('serviceWorker' in navigator) {
+  //   window.addEventListener('load', () => {
+  //     navigator.serviceWorker.unregister('./sw.js')
+  //       .then(reg => console.log('PWA Registered!'))
+  //       .catch(err => console.log('PWA Error', err));
+  //   });
+  // }
+
+//   if ("serviceWorker" in navigator) {
+
+//   navigator.serviceWorker.getRegistrations().then((registrations) => {
+//     for (let registration of registrations) {
+//       registration.unregister();
+//     }
+//   });
+// }
+
 </script>
   </body>
 </html>
