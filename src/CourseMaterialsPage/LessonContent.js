@@ -1,3 +1,4 @@
+import ExamPage from './finalExamUnitsCourse/ExamPage';
 import ActivityCard from './ActivityCard';
 
 const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLesson }) => {
@@ -15,13 +16,14 @@ const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLes
     const currentLesson = lessons.find(
         l => l.id === activeLesson
     );
-
+    const isExam = currentLesson?.is_final === true;
     return (
         <div>
             < div className="col-md-9  lesson-content-area" >
                 <div className="lesson-card bg-white shadow-sm rounded-4 p-4">
                     <div className="mb-4 p-3 bg-light rounded-3 border">
-                        {currentLesson && !currentLesson.is_final && (
+                        {!isExam && (
+                            // {currentLesson && !currentLesson.is_final && (
                             <div className="card border-0 shadow-sm mb-4 p-3">
                                 <h6 className="fw-bold text-primary">
                                     {isEnglish ? "Step 1: Download Lesson Material" : "الخطوة الأولى: تحميل مواد الدرس "}
@@ -31,7 +33,7 @@ const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLes
                                 </p>
                                 {contents && (
                                     <a
-                                    href={contents.url}
+                                        href={contents.url}
                                         target='_blank'
                                         rel="noopener noreferrer"
                                         className="btn btn-primary"
@@ -43,22 +45,25 @@ const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLes
 
                             </div>
                         )}
+                        {isExam && (
+                            <ExamPage lessonId={activeLesson} />)}
                     </div>
-                
+
                     <h5 className="fw-bold mb-3 d-flex align-items-center">
                         <span className="badge bg-primary me-2">  {isEnglish ? "Lesson" : "الدرس"} {activeLesson} :</span>
                     </h5>
-                    <div className="row g-4">
-                        {activities.map((material) => (
-                            <div key={material.id} className="col-md-4 d-flex">
-                                <ActivityCard
-                                    material={material}
-                                    fetchProgress={fetchProgress}
-                                    isEnglish={isEnglish}
-                                />
-                            </div>
-                        ))}
-                    </div>
+                    {!isExam && (
+                        <div className="row g-4">
+                            {activities.map((material) => (
+                                <div key={material.id} className="col-md-4 d-flex">
+                                    <ActivityCard
+                                        material={material}
+                                        fetchProgress={fetchProgress}
+                                        isEnglish={isEnglish}
+                                    />
+                                </div>
+                            ))}
+                        </div>)}
                 </div>
             </div >
         </div>

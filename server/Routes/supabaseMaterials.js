@@ -37,9 +37,9 @@ router.post("/upload-free-course", verifyToken, upload.single("file"), async (re
       return res.status(400).json({ error: "Only PDF allowed" })
     }
 
-    // const filePath = `student-submissions/${materialId}/${file.originalname}`
-    const filePath = `student-submissions${courseId}/unit-${unitId}/lesson-${lessonId}/${file.originalname}`;
-
+     const filePath = `student-submissions/${materialId}/${file.originalname}`
+   // const filePath = `student-submissions/${materialId}/${unitId}/${lessonId}/${file.originalname}`;
+console.log("materials id :", materialId);
     const { data, error } = await supabase
       .storage
       .from("student-submissions")

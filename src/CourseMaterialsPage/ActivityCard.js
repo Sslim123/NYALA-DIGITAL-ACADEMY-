@@ -26,7 +26,7 @@ const ActivityCard = ({ material, fetchProgress, isEnglish }) => {
           body: formData
         }
       );
-
+console.log("mterials id :", formData);
       if (!res.ok) throw new Error("Upload failed");
 
       alert("Upload successful ✅");
@@ -41,7 +41,6 @@ const ActivityCard = ({ material, fetchProgress, isEnglish }) => {
     <div className="card shadow-sm h-100">
       <div className="card-body text-center">
         <h6 className="fw-bold"> {material.title}</h6>
-
         <a
           href={material.url}
           target="_blank"
