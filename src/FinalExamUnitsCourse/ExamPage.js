@@ -9,11 +9,7 @@ export default function ExamPage({ lessonId }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    let examRoute = lessonId;
-    if (lessonId === 16 && result?.passed) {
-      examRoute = "final-course";
-    }
+    setExam(null);
     fetch(`/api/exams/${examRoute}`, {
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +17,11 @@ export default function ExamPage({ lessonId }) {
       }
     })
       .then(res => res.json())
-      .then(setExam);
+      .then(data => {
+        setExam(data);
+        setAnswers({});
+        setResult(null);
+      });
   }, [examRoute]);
 
 
@@ -29,12 +29,14 @@ export default function ExamPage({ lessonId }) {
   const submitExam = async () => {
 
     const token = localStorage.getItem("token");
-
+    const payload = Object.entries(answers)
+      .filter(([q, a]) => a !== undefined)
+      .map(([q, a]) => ({
+        question_id: Number(q),
+        selected: a
+      }));
     console.log("answers", answers);
-    const payload = Object.entries(answers).map(([q, a]) => ({
-      question_id: Number(q),
-      selected: a
-    }));
+
     try {
 
       const res = await fetch("/api/exams/submit", {
@@ -49,18 +51,17 @@ export default function ExamPage({ lessonId }) {
         })
       });
 
-      const result = await res.json();
-      setResult(result);
-      if (result?.passed && lessonId === 16) {
+      const data = await res.json();
+      setResult(data);
+      if (data?.passed && examRoute === 16) {
         alert("Final course exam unlocked");
         setExamRoute("final-course");
-        setAnswers({})
-        setResult(null);
+        return;
       }
 
-      if (result.certificate) {
+      if (data.certificate) {
 
-        alert("🎉 Congratulations! Certificate unlocked");
+        // alert("🎉 Congratulations! Certificate unlocked");
 
         window.location.href = "/certificate";
 

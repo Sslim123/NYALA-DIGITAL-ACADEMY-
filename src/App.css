@@ -115,4 +115,24 @@ body {
 }.rounded-3:hover {
     transform: translateX(5px);
     background-color: #f8f9fa;
+}.card {
+  border: 6px solid #d4af37;
+  border-radius: 15px;
+}#certificate{
+  width:1000px;
+  padding:60px;
+  background:white;
+  border:10px solid #0a7c3c;
+  text-align:center;
+  font-family:serif;
+}
+
+#certificate h1{
+  color:#0a7c3c;
+  font-size:50px;
+}
+
+#certificate h2{
+  color:#1e64d6;
+  font-size:40px;
 }

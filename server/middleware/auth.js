@@ -10,7 +10,7 @@ function verifyToken(req, res, next) {
   try {
     const decoded = jwt.verify(token, "SECRET_KEY");
     console.log("DECODED:", decoded);
-    req.student = decoded;
+    req.user = decoded;
     next();
   } catch (err) {
     console.log("TOKEN ERROR:", err.message);
