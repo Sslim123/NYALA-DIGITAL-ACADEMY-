@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UnitSideBar from "./UnitSidebar";
 import LessonContent from "./LessonContent";
-import FinalAssessmentCard from './FinalAssessmentCard';
+//import FinalAssessmentCard from './FinalAssessmentCard';
 import { Translations } from "../TranslateContent/Translations";
 
 const CourseMaterials = ({ isEnglish }) => {
@@ -169,7 +169,7 @@ const CourseMaterials = ({ isEnglish }) => {
             <UnitSideBar units={units} courseProgress={courseProgress} activeLesson={activeLesson} isEnglish={isEnglish} contents={contents} activeUnit={activeUnit}
                 setActiveUnit={setActiveUnit} lessons={lessons} setActiveLesson={setActiveLesson} />
             <LessonContent fetchProgress={fetchProgress} isEnglish={isEnglish} materials={materials} lessons={lessons} activeLesson={activeLesson} />
-            <FinalAssessmentCard materials={materials} lessons={lessons} submitAssessment={submitAssessment} currentUnitProgress={currentUnitProgress} activeLesson={activeLesson} courseStatus={courseStatus} />
+            {/* <FinalAssessmentCard materials={materials} lessons={lessons} submitAssessment={submitAssessment} currentUnitProgress={currentUnitProgress} activeLesson={activeLesson} courseStatus={courseStatus} /> */}
 
         </>
     )

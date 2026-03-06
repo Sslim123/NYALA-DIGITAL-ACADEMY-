@@ -8,10 +8,6 @@ const verifyToken = require('../middleware/auth');
 
 const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
 console.log("SUPABASE_URL:", process.env.SUPABASE_URL);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

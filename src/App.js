@@ -13,6 +13,7 @@ import HandleLogin from './pages/HandleLogin.js';
 import Hero from './Components/Hero.js';
 import AboutBlogs from './Components/AboutBlogs.js';
 import CourseMaterials from './CourseMaterialsPage/CourseMaterials'
+import CertificationsPage from './pages/CertificationPage.js';
 function App() {
 
   const [isEnglish, setIsEnglish] = useState(false);
@@ -51,6 +52,7 @@ function App() {
           <Route path="/path" element={<Roadmap isEnglish={isEnglish} />} />
           <Route path="/verify" element={<Verify isEnglish={isEnglish} />} />
           <Route path="/portal" element={<HandleLogin isEnglish={isEnglish} />} />
+          <Route path='/certificate' element={<CertificationsPage isEnglish={isEnglish}/>}/>
         </Routes>
         <Footer isEnglish={isEnglish} />
       </Router>

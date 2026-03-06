@@ -10,12 +10,13 @@ router.get("/exams/:lessonId", verifyToken, async (req, res) => {
 
     const lessonId = req.params.lessonId;
 
-    const fileName = `unit${lessonId}.json`;
-const progress = await getStudentProgress(req.user.id, lessonId);
+    const fileName = `lesson-${lessonId}.json`;
+// const progress = await getStudentProgress(req.user.id, lessonId);
 
-if (progress < 70) {
-  return res.status(403).json({ error: "Exam locked" });
-}
+// if (progress < 70) {
+//   return res.status(403).json({ error: "Exam locked" });
+// }
+console.log("Supabase client:", supabase);
     const { data, error } = await supabase
       .storage
       .from("exam-json")
@@ -36,4 +37,4 @@ if (progress < 70) {
   }
 
 });
-module.export = router;
+module.exports = router;

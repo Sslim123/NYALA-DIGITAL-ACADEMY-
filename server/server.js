@@ -11,7 +11,8 @@ const StudentCourses = require("./Routes/StudentCourses");
 const submissionsRoutes = require("./Routes/submissions");
 const supabaseConfig = require('./Routes/supabaseMaterials');
 const examRoutes = require('./Routes/ExamRoutes');
-const examSubmisson = require('./Routes/ExamSubmissins')
+const examSubmisson = require('./Routes/ExamSubmissins');
+const certificateRoutes = require('./Routes/CertifcatesRoutes')
 
 const app = express();
 
@@ -48,7 +49,8 @@ app.use("/api", submissionsRoutes);
 app.use('/api', applyRoutes); 
 app.use('/api', supabaseConfig);
 app.use('/api', examRoutes);
-app.use('/api', examSubmisson)
+app.use('/api', examSubmisson);
+app.use('/api', certificateRoutes)
 
 
 app.use("/uploads", express.static("uploads"));

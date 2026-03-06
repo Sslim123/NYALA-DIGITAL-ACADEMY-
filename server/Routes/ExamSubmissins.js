@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const pool = require('../config/db');
 const verifyToken = require("../middleware/auth");
 const supabase = require("../config/supabase");
 
 
-router.post("/submit", verifyToken, async (req, res) => {
+router.post("/exams/submit", verifyToken, async (req, res) => {
 
   try {
 
@@ -56,12 +57,27 @@ router.post("/submit", verifyToken, async (req, res) => {
     const percentage = Math.round((score / total) * 100);
 
     const passed = percentage >= exam.pass_score;
+    if (lesson_id === "final-course" && percentage >= exam.pass_score) {
+
+      const code = `NYALA-${Date.now()}`;
+
+      await pool.query(`
+    INSERT INTO certificates (user_id, course_name, certificate_code)
+    VALUES ($1,$2,$3)
+  `, [
+        req.user.id,
+        "Digital Systems Foundations",
+        code
+      ]);
+
+    }
 
     res.json({
       score,
-      total,
+      total: exam.questions.length,
       percentage,
-      passed
+      passed: percentage >= exam.pass_score,
+      certificate: lesson_id === "final-course" && percentage >= exam.pass_score
     });
 
   } catch (err) {

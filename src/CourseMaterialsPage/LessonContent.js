@@ -1,4 +1,4 @@
-import ExamPage from './finalExamUnitsCourse/ExamPage';
+import ExamPage from '../FinalExamUnitsCourse/ExamPage'
 import ActivityCard from './ActivityCard';
 
 const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLesson }) => {
@@ -49,11 +49,11 @@ const LessonContent = ({ lessons, materials, isEnglish, fetchProgress, activeLes
                             <ExamPage lessonId={activeLesson} />)}
                     </div>
 
-                    <h5 className="fw-bold mb-3 d-flex align-items-center">
-                        <span className="badge bg-primary me-2">  {isEnglish ? "Lesson" : "الدرس"} {activeLesson} :</span>
-                    </h5>
                     {!isExam && (
                         <div className="row g-4">
+                            <h5 className="fw-bold mb-3 d-flex align-items-center">
+                            <span className="badge bg-primary me-2">  {isEnglish ? "Lesson" : "الدرس"} {activeLesson} :</span>
+                            </h5>
                             {activities.map((material) => (
                                 <div key={material.id} className="col-md-4 d-flex">
                                     <ActivityCard
