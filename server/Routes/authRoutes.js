@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
@@ -9,8 +10,8 @@ const authController = require('../controllers/authController');
 
 
 app.use(express.json());
-router.post('/login', verifyToken, authController.loginUser);
-router.post('/set-password', verifyToken, authController.setPassword);
+router.post('/login',  authController.loginUser);
+router.post('/set-password', authController.setPassword);
 
 
 app.post("/api/auth/token-login", async (req, res) => {

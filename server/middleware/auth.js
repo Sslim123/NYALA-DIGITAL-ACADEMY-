@@ -6,6 +6,8 @@ function verifyToken(req, res, next) {
   if (!header) {
     return res.status(403).json({ message: "Unauthorized" });
   }
+  console.log("VERIFY TOKEN HIT");
+
   const token = header && header.split(" ")[1];
   try {
     const decoded = jwt.verify(token, "SECRET_KEY");

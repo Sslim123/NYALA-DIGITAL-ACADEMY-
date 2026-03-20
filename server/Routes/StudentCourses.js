@@ -9,7 +9,7 @@ router.get("/student-courses", verifyToken, async (req, res) => {
 
   try {
 
-    const studentId = req.student.id;
+    const studentId = req.user.id;
 
     const studentResult = await pool.query(
       "SELECT current_track FROM students WHERE student_id = $1",
@@ -26,7 +26,7 @@ router.get("/student-courses", verifyToken, async (req, res) => {
       "SELECT id, name, track FROM courses",
       console.log("Student Track:", track)
     );
-    console.log("All Courses:", coursesResult.rows);
+    //console.log("All Courses:", coursesResult.rows);
 
     res.json(coursesResult.rows);
 

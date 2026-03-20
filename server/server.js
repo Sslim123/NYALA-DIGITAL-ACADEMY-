@@ -2,21 +2,26 @@ require('dotenv').config();
 const express = require('express');
 const session = require("express-session");
 const MemoryStore = require("memorystore")(session);
+const compressions = require("compression");
 const cors = require('cors');
 const PORT = process.env.PORT || 5000;
 
 const authRoutes = require('./Routes/authRoutes');
 const applyRoutes = require('./Routes/applyRoutes');
+
 const StudentCourses = require("./Routes/StudentCourses");
-const submissionsRoutes = require("./Routes/submissions");
-const supabaseConfig = require('./Routes/supabaseMaterials');
-const examRoutes = require('./Routes/ExamRoutes');
-const examSubmisson = require('./Routes/ExamSubmissins');
-const certificateRoutes = require('./Routes/CertifcatesRoutes');
-const examEttempts = require('./Routes/ExamEttempts')
+const supabaseConfig = require('./Routes/uploadsMaterials');
+const submissionsRoutes = require("./Routes/getCourseMaterials");
 
+const examAttempts = require('./Routes/exam/examAttempts');
+const examAutoSaves = require('./Routes/exam/examAutoSaves');
+const examStart = require('./Routes/exam/examStart');
+const examSubmit = require('./Routes/exam/examSubmit');
+
+const certificateRoutes = require('./Routes/certificate/CertifcatesRoutes');
+const generateCode = require('./Routes/certificate/GenerateCode');
 const app = express();
-
+app.use(compressions());
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -49,13 +54,12 @@ app.use('/api', StudentCourses);
 app.use("/api", submissionsRoutes);
 app.use('/api', applyRoutes); 
 app.use('/api', supabaseConfig);
-app.use('/api', examRoutes);
-app.use('/api', examSubmisson);
 app.use('/api', certificateRoutes);
-app.use('/api', examEttempts)
-
-
-app.use("/uploads", express.static("uploads"));
+app.use('/api', generateCode);
+app.use('/api', examAttempts)
+app.use('/api', examAutoSaves)
+app.use('/api', examStart);
+app.use('/api', examSubmit);
 
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
